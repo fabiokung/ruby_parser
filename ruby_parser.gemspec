@@ -1,3 +1,5 @@
+# -*- encoding: utf-8 -*-
+
 Gem::Specification.new do |s|
   s.name = %q{ruby_parser}
   s.version = "2.0.2"
