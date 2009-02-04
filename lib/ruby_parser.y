@@ -1115,6 +1115,7 @@ rule
                     f_arglist bodystmt kEND
                     {
                       result = new_defn val
+                      result.endline = lexer.lineno
                       self.env.unextend
                       self.in_def = false
                     }
