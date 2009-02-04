@@ -12,7 +12,7 @@ Gem::Specification.new do |s|
   s.extra_rdoc_files = ["History.txt", "Manifest.txt", "README.txt"]
   s.files = [".autotest", "History.txt", "Manifest.txt", "README.txt", "Rakefile", "bin/ruby_parse", "lib/gauntlet_rubyparser.rb", "lib/ruby_lexer.rb", "lib/ruby_parser.y", "lib/ruby_parser_extras.rb", "test/test_ruby_lexer.rb", "test/test_ruby_parser.rb", "test/test_ruby_parser_extras.rb", "lib/ruby_parser.rb"]
   s.has_rdoc = true
-  s.homepage = %q{http://github.com/fabiokung/ruby_parser/tree/main}
+  s.homepage = %q{http://github.com/fabiokung/ruby_parser/tree/master}
   s.rdoc_options = ["--main", "README.txt"]
   s.require_paths = ["lib"]
   s.rubyforge_project = %q{parsetree}
