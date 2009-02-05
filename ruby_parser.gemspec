@@ -4,7 +4,7 @@ Gem::Specification.new do |s|
   s.name = %q{ruby_parser}
   s.version = "2.0.2"
 
-  s.required_rubygems_version = Gem::Requirement.new(">= 1.0") if s.respond_to? :required_rubygems_version=
+  s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Ryan Davis", "Fabio Kung"]
   s.date = %q{2009-02-04}
   s.default_executable = %q{ruby_parse}
@@ -14,7 +14,7 @@ Gem::Specification.new do |s|
   s.extra_rdoc_files = ["History.txt", "Manifest.txt", "README.txt"]
   s.files = [".autotest", "History.txt", "Manifest.txt", "README.txt", "Rakefile", "bin/ruby_parse", "lib/gauntlet_rubyparser.rb", "lib/ruby_lexer.rb", "lib/ruby_parser.y", "lib/ruby_parser_extras.rb", "test/test_ruby_lexer.rb", "test/test_ruby_parser.rb", "test/test_ruby_parser_extras.rb", "lib/ruby_parser.rb"]
   s.has_rdoc = true
-  s.homepage = %q{http://github.com/fabiokung/ruby_parser/tree/master}
+  s.homepage = %q{http://github.com/fabiokung/ruby_parser/tree/master/}
   s.rdoc_options = ["--main", "README.txt"]
   s.require_paths = ["lib"]
   s.rubyforge_project = %q{parsetree}
@@ -27,16 +27,16 @@ Gem::Specification.new do |s|
     s.specification_version = 2
 
     if Gem::Version.new(Gem::RubyGemsVersion) >= Gem::Version.new('1.2.0') then
-      s.add_runtime_dependency(%q<sexp_processor>, [">= 3.0.1"])
+      s.add_runtime_dependency(%q<fabiokung-sexp_processor>, [">= 3.0.1"])
       s.add_development_dependency(%q<ParseTree>, [">= 0"])
       s.add_development_dependency(%q<hoe>, [">= 1.8.2"])
     else
-      s.add_dependency(%q<sexp_processor>, [">= 3.0.1"])
+      s.add_dependency(%q<fabiokung-sexp_processor>, [">= 3.0.1"])
       s.add_dependency(%q<ParseTree>, [">= 0"])
       s.add_dependency(%q<hoe>, [">= 1.8.2"])
     end
   else
-    s.add_dependency(%q<sexp_processor>, [">= 3.0.1"])
+    s.add_dependency(%q<fabiokung-sexp_processor>, [">= 3.0.1"])
     s.add_dependency(%q<ParseTree>, [">= 0"])
     s.add_dependency(%q<hoe>, [">= 1.8.2"])
   end
