@@ -58,7 +58,7 @@ becomes:
 
 == INSTALL:
 
-* sudo gem install ruby_parser
+* sudo gem install fabiokung-ruby_parser -s http://gems.github.com
 
 == LICENSE:
 
