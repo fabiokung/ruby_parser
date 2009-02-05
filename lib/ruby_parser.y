@@ -81,7 +81,7 @@ rule
                     }
                     fitem
                     {
-                      result = s(:alias, val[1], val[3]).line(val[2])
+                      result = s(:alias, val[1], val[3]).line(val[2]).endline(self.lexer.lineno)
                     }
                 | kALIAS tGVAR tGVAR
                     {
@@ -245,6 +245,7 @@ rule
                     compstmt tRCURLY
                     {
                       result = new_iter nil, val[2], val[4]
+                      result.endline = self.lexer.lineno
                       self.env.unextend
                     }
 
@@ -925,6 +926,7 @@ rule
                       end
 
                       result.line = val[1]
+                      result.endline = self.lexer.lineno
                     }
                 | tLPAREN_ARG expr
                     {
@@ -1066,6 +1068,7 @@ rule
                     bodystmt kEND
                     {
                       result = new_class val
+                      result.endline = self.lexer.lineno
                       self.env.unextend
                     }
                 | kCLASS tLSHFT
@@ -1086,6 +1089,7 @@ rule
                     bodystmt kEND
                     {
                       result = new_sclass val
+                      result.endline = self.lexer.lineno
                       self.env.unextend
                     }
                 | kMODULE
@@ -1103,6 +1107,7 @@ rule
                     bodystmt kEND
                     {
                       result = new_module val
+                      result.endline = self.lexer.lineno
                       self.env.unextend
                     }
                 | kDEF fname
@@ -1133,7 +1138,7 @@ rule
                     f_arglist bodystmt kEND
                     {
                       result = new_defs val
-
+                      result.endline = self.lexer.lineno
                       self.env.unextend
                       self.in_single -= 1
                     }
@@ -1240,7 +1245,7 @@ rule
                     }
                     paren_args
                     {
-                      result = new_call nil, val[0].to_sym, val[2]
+                      result = new_call(nil, val[0].to_sym, val[2]).endline(self.lexer.lineno)
                     }
                 | primary_value tDOT operation2 opt_paren_args
                     {
@@ -1279,6 +1284,7 @@ rule
                       body   = val[4]
                       result = new_iter nil, args, body
                       self.env.unextend
+                      result.endline = self.lexer.lineno
                       result.line = val[1]
                     }
                 | kDO
@@ -1296,6 +1302,7 @@ rule
                       body = val[4]
                       result = new_iter nil, args, body
                       self.env.unextend
+                      result.endline = self.lexer.lineno
                       result.line = val[1]
                     }
 
@@ -1307,6 +1314,7 @@ rule
                     {
                       result = s(:when, val[2], val[4])
                       result.line = val[1]
+                      result.endline = self.lexer.lineno
                       result << val[5] if val[5]
                     }
 
