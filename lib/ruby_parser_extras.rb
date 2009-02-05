@@ -113,7 +113,7 @@ class RPStringScanner < StringScanner
 end
 
 class RubyParser < Racc::Parser
-  VERSION = '2.0.2'
+  VERSION = '2.0.3'
 
   attr_accessor :lexer, :in_def, :in_single, :file
   attr_reader :env, :comments

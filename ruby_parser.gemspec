@@ -2,11 +2,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{ruby_parser}
-  s.version = "2.0.2"
+  s.version = "2.0.3"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Ryan Davis", "Fabio Kung"]
-  s.date = %q{2009-02-04}
+  s.date = %q{2009-02-05}
   s.default_executable = %q{ruby_parse}
   s.description = %q{ruby_parser (RP) is a ruby parser written in pure ruby (utilizing racc--which does by default use a C extension). RP's output is the same as ParseTree's output: s-expressions using ruby's arrays and base types.  As an example:  def conditional1(arg1) if arg1 == 0 then return 1 end return 0 end  becomes:  s(:defn, :conditional1, s(:args, :arg1), s(:scope, s(:block, s(:if, s(:call, s(:lvar, :arg1), :==, s(:arglist, s(:lit, 0))), s(:return, s(:lit, 1)), nil), s(:return, s(:lit, 0)))))}
   s.email = ["ryand-ruby@zenspider.com", "fabio.kung@gmail.com"]
