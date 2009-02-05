@@ -16,7 +16,7 @@ hoe = Hoe.new('ruby_parser', RubyParser::VERSION) do |parser|
   parser.developer('Fabio Kung', 'fabio.kung@gmail.com')
 
   parser.extra_dev_deps << 'ParseTree'
-  parser.extra_deps << ['sexp_processor', '>= 3.0.1']
+  parser.extra_deps << ['fabiokung-sexp_processor', '>= 3.0.1']
 end
 
 hoe.spec.files += ['lib/ruby_parser.rb'] # jim.... cmon man
