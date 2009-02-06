@@ -453,11 +453,13 @@ class TestRubyParser < RubyParserTestCase
 
     body = result.scope.block
 
-    assert_equal 1, result.line,         "defn should have line number"
-    assert_equal 5, result.endline,      "defn should have end line number"
-    assert_equal 2, body.call.line,      "call should have line number"
-    assert_equal 3, body.lasgn.line,     "lasgn should have line number"
-    assert_equal 4, body.return.line,    "return should have line number"
+    assert_equal 1, result.line,          "defn should have line number"
+    assert_equal 5, result.endline,       "defn should have end line number"
+    assert_equal 1, result.scope.line,    "scope should have line number"
+    assert_equal 5, result.scope.endline, "scope should have end line number"
+    assert_equal 2, body.call.line,       "call should have line number"
+    assert_equal 3, body.lasgn.line,      "lasgn should have line number"
+    assert_equal 4, body.return.line,     "return should have line number"
   end
   
   def test_end_line_number_for_classes
@@ -479,15 +481,21 @@ class TestRubyParser < RubyParserTestCase
     body = result.scope.block
 
     assert_equal pt, result
-    assert_equal(1, result.line,       "class should have line number")
-    assert_equal(9, result.endline,    "class should have end line number")
-    assert_equal(2, body.defs.line,    "defs should have line number")
-    assert_equal(5, body.defs.endline, "defs should have end line number")
-    assert_equal(6, body.defn.line,    "defn should have line number")
-    assert_equal(8, body.defn.endline, "defn should have end line number")
+    assert_equal(1, result.line,             "class should have line number")
+    assert_equal(9, result.endline,          "class should have end line number")
+    assert_equal(1, result.scope.line,       "scope should have line number")
+    assert_equal(9, result.scope.endline,    "scope should have end line number")
+    assert_equal(2, body.defs.line,          "defs should have line number")
+    assert_equal(5, body.defs.endline,       "defs should have end line number")
+    assert_equal(2, body.defs.scope.line,    "defs scope should have line number")
+    assert_equal(5, body.defs.scope.endline, "defs scope should have end line number")
+    assert_equal(6, body.defn.line,          "defn should have line number")
+    assert_equal(8, body.defn.endline,       "defn should have end line number")
+    assert_equal(6, body.defn.scope.line,    "defn scope should have line number")
+    assert_equal(8, body.defn.scope.endline, "defn scope should have end line number")
   end
 
-  def test_end_line_number_for_modules_and_aliases
+  def test_end_line_number_for_modules_scopes_and_aliases
     rb = "module A\n  module B\n    alias m1 m2\n  end\nend\n"
     pt = s(:module, :A, 
            s(:scope, 
@@ -501,8 +509,12 @@ class TestRubyParser < RubyParserTestCase
     assert_equal pt, result
     assert_equal(1, result.line,                   "module should have line number")
     assert_equal(5, result.endline,                "module should have end line number")
+    assert_equal(1, result.scope.line,             "scope should have line number")
+    assert_equal(5, result.scope.endline,          "scope should have end line number")
     assert_equal(2, submodule.line,                "submodule should have line number")
     assert_equal(4, submodule.endline,             "submodule should have end line number")
+    assert_equal(2, submodule.scope.line,          "submodule scope should have line number")
+    assert_equal(4, submodule.scope.endline,       "submodule scope should have end line number")
     assert_equal(3, submodule.scope.alias.line,    "alias should have line number")
     assert_equal(3, submodule.scope.alias.endline, "alias should have end line number")
   end
@@ -544,6 +556,8 @@ class TestRubyParser < RubyParserTestCase
     assert_equal pt, result
     assert_equal(1,  result.line,                        "defn should have line number")
     assert_equal(13, result.endline,                     "defn should have end line number")
+    assert_equal(1,  result.scope.line,                  "scope should have line number")
+    assert_equal(13, result.scope.endline,               "scope should have end line number")
     assert_equal(2,  body.find_nodes(:iter)[0].line,     "proc should have line number")
     assert_equal(4,  body.find_nodes(:iter)[0].endline,  "proc should have end line number")
     assert_equal(5,  body.find_nodes(:iter)[1].line,     "cbrace proc should have line number")

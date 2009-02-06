@@ -491,6 +491,8 @@ class RubyParser < Racc::Parser
   def new_class val
     line, path, superclass, body = val[1], val[2], val[3], val[5]
     scope = s(:scope, body).compact
+    scope.line = line
+    scope.endline = lexer.lineno
     result = s(:class, path, superclass, scope)
     result.line = line
     result.comments = self.comments.pop
@@ -505,14 +507,15 @@ class RubyParser < Racc::Parser
 
   def new_defn val
     (line, bol), name, args, body = val[2], val[1], val[3], val[4]
+    line -= 1 if bol
     body ||= s(:nil)
 
     body ||= s(:block)
     body = s(:block, body) unless body.first == :block
 
-    result = s(:defn, name.to_sym, args, s(:scope, body))
+    scope = s(:scope, body).line(line).endline(lexer.lineno)
+    result = s(:defn, name.to_sym, args, scope)
     result.line = line
-    result.line -= 1 if bol
     result.comments = self.comments.pop
     result
   end
@@ -523,7 +526,8 @@ class RubyParser < Racc::Parser
     body ||= s(:block)
     body = s(:block, body) unless body.first == :block
 
-    result = s(:defs, recv, name.to_sym, args, s(:scope, body))
+    scope = s(:scope, body).line(recv.line).endline(lexer.lineno)
+    result = s(:defs, recv, name.to_sym, args, scope)
     result.line = recv.line
     result.comments = self.comments.pop
     result
@@ -563,6 +567,8 @@ class RubyParser < Racc::Parser
   def new_module val
     line, path, body = val[1], val[2], val[4]
     body = s(:scope, body).compact
+    body.line = line
+    body.endline = lexer.lineno
     result = s(:module, path, body)
     result.line = line
     result.comments = self.comments.pop
@@ -637,9 +643,12 @@ class RubyParser < Racc::Parser
 
   def new_sclass val
     recv, in_def, in_single, body = val[3], val[4], val[6], val[7]
+    line = val[2]
     scope = s(:scope, body).compact
+    scope.line = line
+    scope.endline = lexer.lineno
     result = s(:sclass, recv, scope)
-    result.line = val[2]
+    result.line = line
     self.in_def = in_def
     self.in_single = in_single
     result
