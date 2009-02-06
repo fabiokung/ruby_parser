@@ -1029,9 +1029,13 @@ rule
                     {
                       result = new_until val[5], val[2], true
                     }
-                | kCASE expr_value opt_terms case_body kEND
+                | kCASE
                     {
-                      result = new_case val[1], val[3]
+                      result = self.lexer.lineno
+                    }
+                    expr_value opt_terms case_body kEND
+                    {
+                      result = new_case(val[2], val[4]).line(val[1]).endline(self.lexer.lineno)
                     }
                 | kCASE            opt_terms case_body kEND
                     {

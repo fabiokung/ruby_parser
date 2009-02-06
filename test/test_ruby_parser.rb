@@ -393,9 +393,7 @@ class TestRubyParser < RubyParserTestCase
   end
 
   STARTING_LINE = {
-    "case_nested_inner_no_expr"          => 2,
     "case_no_expr"                       => 2,
-    "case_splat"                         => 2,
     "dstr_heredoc_expand"                => 2,
     "dstr_heredoc_windoze_sucks"         => 2,
     "dstr_heredoc_yet_again"             => 2,
@@ -588,13 +586,14 @@ class TestRubyParser < RubyParserTestCase
     body = result.scope.block
 
     assert_equal pt, result
-    assert_equal(1,  result.line,                        "defn should have line number")
-    assert_equal(10, result.endline,                     "defn should have end line number")
-    assert_equal(3,  body.case.line,     "case should have line number")
-    assert_equal(3,  body.case.find_nodes(:when)[0].line,     "when proc should have line number")
-    assert_equal(5,  body.case.find_nodes(:when)[0].endline,  "when proc should have end line number")
-    assert_equal(5,  body.case.find_nodes(:when)[1].line,     "when proc should have line number")
-    assert_equal(7,  body.case.find_nodes(:when)[1].endline,  "when proc should have end line number")
+    assert_equal(1,  result.line,       "defn should have line number")
+    assert_equal(10, result.endline,    "defn should have end line number")
+    assert_equal(2,  body.case.line,    "case should have line number")
+    assert_equal(9,  body.case.endline, "case should have line number")
+    assert_equal(3,  body.case.find_nodes(:when)[0].line,    "when proc should have line number")
+    assert_equal(5,  body.case.find_nodes(:when)[0].endline, "when proc should have end line number")
+    assert_equal(5,  body.case.find_nodes(:when)[1].line,    "when proc should have line number")
+    assert_equal(7,  body.case.find_nodes(:when)[1].endline, "when proc should have end line number")
     
     # UnifiedRuby AST doen't have nodes for else inside when blocks!
   end
