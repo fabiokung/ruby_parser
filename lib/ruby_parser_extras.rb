@@ -225,6 +225,7 @@ class RubyParser < Racc::Parser
     end
 
     line = [head.line, tail.line].compact.min
+    endline = [head.endline, tail.endline].compact.max
 
     head = remove_begin(head)
     head = s(:block, head) unless head[0] == :block
@@ -236,6 +237,7 @@ class RubyParser < Racc::Parser
     end
 
     head.line = line
+    head.endline = endline
     head
   end
 
@@ -757,6 +759,7 @@ class RubyParser < Racc::Parser
     if node and :begin == node[0] and node.size == 2 then
       node = node[-1]
       node.line = oldnode.line
+      node.endline = oldnode.endline
     end
     node
   end
@@ -794,6 +797,7 @@ class RubyParser < Racc::Parser
   def value_expr oldnode # HACK
     node = remove_begin oldnode
     node.line = oldnode.line if oldnode
+    node.endline = oldnode.endline
     node[2] = value_expr(node[2]) if node and node[0] == :if
     node
   end

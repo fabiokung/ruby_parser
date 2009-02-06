@@ -1330,14 +1330,20 @@ rule
 
            cases: opt_else | case_body
 
-      opt_rescue: kRESCUE exc_list exc_var then compstmt opt_rescue
+      opt_rescue: kRESCUE
                     {
-                      klasses, var, body, rest = val[1], val[2], val[4], val[5]
+                      result = self.lexer.lineno
+                    }
+                    exc_list exc_var then compstmt opt_rescue
+                    {
+                      klasses, var, body, rest = val[2], val[3], val[5], val[6]
 
                       klasses ||= s(:array)
                       klasses << node_assign(var, s(:gvar, :"$!")) if var
 
                       result = s(:resbody, klasses, body)
+                      result.line = val[1]
+                      result.endline = self.lexer.lineno
                       result << rest if rest # UGH, rewritten above
                     }
                 |

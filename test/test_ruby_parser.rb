@@ -3,9 +3,6 @@
 require 'test/unit'
 require 'ruby_parser'
 
-$: << File.expand_path('~/Work/p4/zss/src/ParseTree/dev/lib')
-$: << File.expand_path('~/Work/p4/zss/src/ParseTree/dev/test')
-
 require 'pt_testcase'
 
 class RubyParser
@@ -428,9 +425,9 @@ class TestRubyParser < RubyParserTestCase
 
     assert_equal pt, result
 
-    assert_equal 1, result.line,       "block should have line number"
-    assert_equal 1, result.lasgn.line, "lasgn should have line number"
-    assert_equal 2, result.call.line,  "call should have line number"
+    assert_equal 1, result.line,          "block should have line number"
+    assert_equal 1, result.lasgn.line,    "lasgn should have line number"
+    assert_equal 2, result.call.line,     "call should have line number"
 
     expected = "blah.rb"
 
@@ -458,9 +455,105 @@ class TestRubyParser < RubyParserTestCase
 
     body = result.scope.block
 
-    assert_equal 1, result.line,      "defn should have line number"
-    assert_equal 2, body.call.line,   "call should have line number"
-    assert_equal 3, body.lasgn.line,  "lasgn should have line number"
-    assert_equal 4, body.return.line, "return should have line number"
+    assert_equal 1, result.line,         "defn should have line number"
+    assert_equal 5, result.endline,      "defn should have end line number"
+    assert_equal 2, body.call.line,      "call should have line number"
+    assert_equal 3, body.lasgn.line,     "lasgn should have line number"
+    assert_equal 4, body.return.line,    "return should have line number"
   end
+  
+  def test_end_line_number_for_classes
+    rb = "class Abc\n  def self.class_m(*args)\n    a=2\n    puts()\n  end\n  def met n\n    puts n\n  end\nend\n"
+    pt = s(:class, :Abc, nil, 
+           s(:scope, 
+             s(:block, 
+               s(:defs, s(:self), :class_m, s(:args, :"*args"), 
+                 s(:scope, 
+                   s(:block, 
+                     s(:lasgn, :a, s(:lit, 2)), 
+                     s(:call, nil, :puts, s(:arglist))))), 
+               s(:defn, :met, s(:args, :n), 
+                 s(:scope, 
+                   s(:block, 
+                     s(:call, nil, :puts, s(:arglist, s(:lvar, :n)))))))))
+                     
+    result = @processor.parse(rb)
+    body = result.scope.block
+
+    assert_equal pt, result
+    assert_equal(1, result.line,       "class should have line number")
+    assert_equal(9, result.endline,    "class should have end line number")
+    assert_equal(2, body.defs.line,    "defs should have line number")
+    assert_equal(5, body.defs.endline, "defs should have end line number")
+    assert_equal(6, body.defn.line,    "defn should have line number")
+    assert_equal(8, body.defn.endline, "defn should have end line number")
+  end
+
+  def test_end_line_number_for_modules_and_aliases
+    rb = "module A\n  module B\n    alias m1 m2\n  end\nend\n"
+    pt = s(:module, :A, 
+           s(:scope, 
+             s(:module, :B, 
+               s(:scope, 
+                 s(:alias, s(:lit, :m1), s(:lit, :m2))))))
+
+    result = @processor.parse(rb)
+    submodule = result.scope.module
+
+    assert_equal pt, result
+    assert_equal(1, result.line,                   "module should have line number")
+    assert_equal(5, result.endline,                "module should have end line number")
+    assert_equal(2, submodule.line,                "submodule should have line number")
+    assert_equal(4, submodule.endline,             "submodule should have end line number")
+    assert_equal(3, submodule.scope.alias.line,    "alias should have line number")
+    assert_equal(3, submodule.scope.alias.endline, "alias should have end line number")
+  end
+
+  def test_end_line_number_for_blocks
+    rb = <<-END
+    def m
+      other do
+        puts
+      end
+      another { n = 2 }
+      begin
+        some()
+      rescue
+        la()
+      ensure
+        le()
+      end
+    end
+    END
+    
+    pt = s(:defn, :m, s(:args), 
+           s(:scope, 
+             s(:block, 
+               s(:iter, s(:call, nil, :other, s(:arglist)), nil, 
+                 s(:call, nil, :puts, s(:arglist))), 
+               s(:iter, s(:call, nil, :another, s(:arglist)), nil, 
+                 s(:lasgn, :n, s(:lit, 2))), 
+               s(:ensure, 
+                 s(:rescue, 
+                   s(:call, nil, :some, s(:arglist)), 
+                   s(:resbody, s(:array), 
+                     s(:call, nil, :la, s(:arglist)))), 
+                 s(:call, nil, :le, s(:arglist))))))
+
+    result = @processor.parse(rb)
+    body = result.scope.block
+
+    assert_equal pt, result
+    assert_equal(1,  result.line,                        "defn should have line number")
+    assert_equal(13, result.endline,                     "defn should have end line number")
+    assert_equal(2,  body.find_nodes(:iter)[0].line,     "proc should have line number")
+    assert_equal(4,  body.find_nodes(:iter)[0].endline,  "proc should have end line number")
+    assert_equal(5,  body.find_nodes(:iter)[1].line,     "cbrace proc should have line number")
+    assert_equal(5,  body.find_nodes(:iter)[1].endline,  "cbrace proc should have end line number")
+    assert_equal(6,  body.ensure.line,                   "begin should have line number")
+    assert_equal(12, body.ensure.endline,                "begin should have end line number")
+    assert_equal(8,  body.ensure.rescue.resbody.line,    "rescue should have line number")
+    assert_equal(10, body.ensure.rescue.resbody.endline, "rescue should have end line number")
+  end
+  
 end
