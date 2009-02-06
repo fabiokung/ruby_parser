@@ -554,6 +554,49 @@ class TestRubyParser < RubyParserTestCase
     assert_equal(12, body.ensure.endline,                "begin should have end line number")
     assert_equal(8,  body.ensure.rescue.resbody.line,    "rescue should have line number")
     assert_equal(10, body.ensure.rescue.resbody.endline, "rescue should have end line number")
+    
+    # UnifiedRuby AST doen't have nodes for ensure blocks!
+  end
+  
+  def test_end_line_number_for_case
+    rb = <<-END
+    def a
+      case bla
+      when 1 then
+        1
+      when 2 then
+        2
+      else
+        :other
+      end
+    end
+    END
+    
+    pt = s(:defn, :a, s(:args), 
+           s(:scope, 
+             s(:block, 
+             s(:case, s(:call, nil, :bla, s(:arglist)), 
+               s(:when, 
+                 s(:array, s(:lit, 1)), 
+                 s(:lit, 1)), 
+               s(:when, 
+                 s(:array, s(:lit, 2)), 
+                 s(:lit, 2)), 
+               s(:lit, :other)))))
+
+    result = @processor.parse(rb)
+    body = result.scope.block
+
+    assert_equal pt, result
+    assert_equal(1,  result.line,                        "defn should have line number")
+    assert_equal(10, result.endline,                     "defn should have end line number")
+    assert_equal(3,  body.case.line,     "case should have line number")
+    assert_equal(3,  body.case.find_nodes(:when)[0].line,     "when proc should have line number")
+    assert_equal(5,  body.case.find_nodes(:when)[0].endline,  "when proc should have end line number")
+    assert_equal(5,  body.case.find_nodes(:when)[1].line,     "when proc should have line number")
+    assert_equal(7,  body.case.find_nodes(:when)[1].endline,  "when proc should have end line number")
+    
+    # UnifiedRuby AST doen't have nodes for else inside when blocks!
   end
   
 end

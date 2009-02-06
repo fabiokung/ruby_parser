@@ -1310,12 +1310,16 @@ rule
                     {
                       result = self.lexer.lineno
                     }
-                    when_args then compstmt cases
+                    when_args then compstmt
+                    {
+                      result = self.lexer.lineno
+                    }
+                    cases
                     {
                       result = s(:when, val[2], val[4])
                       result.line = val[1]
-                      result.endline = self.lexer.lineno
-                      result << val[5] if val[5]
+                      result.endline = val[5]
+                      result << val[6] if val[6]
                     }
 
        when_args: args
